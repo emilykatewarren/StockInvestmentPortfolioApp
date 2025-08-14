@@ -86,7 +86,7 @@ else:
     st.subheader("Quarterly Portfolio Close Prices (to date)")
     st.line_chart(quarterly_close)
 
-   # --- 5. Prepare features/targets for multi-step forecasting ---
+   # Prepare features/targets for multi-step forecasting
     n_lags = 5
     n_steps = 4
 
@@ -113,7 +113,7 @@ else:
     split_date = pd.Timestamp('2024-06-30')
     st.write("Test/train split date:", split_date)
 
-    # Use <= for train, > for test split to avoid empty sets
+
     X_train = X[X.index <= split_date]
     y_train = y[y.index <= split_date]
     X_test = X[X.index > split_date]
@@ -125,15 +125,15 @@ else:
         st.error("Train or test set is empty. Please choose a different split date.")
         st.stop()
 
-    # --- 7. Train model ---
+    # Train model 
     model = MultiOutputRegressor(RandomForestRegressor(n_estimators=100, random_state=42))
     model.fit(X_train, y_train)
 
-    # --- 8. Predict next 8 quarters ---
+    # Predict next 8 quarters 
     last_known = X_test.iloc[0].values.reshape(1, -1)
     predictions = model.predict(last_known).flatten()
 
-    # --- 9. Plot results ---
+    # Plot results 
     last_date = quarterly_close.index[-1]
     forecast_start = last_date + pd.offsets.QuarterEnd()
     forecast_index = pd.date_range(start=forecast_start, periods=n_steps, freq='Q')
